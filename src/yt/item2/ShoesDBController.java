@@ -131,7 +131,7 @@ public class ShoesDBController extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		response.sendRedirect("/test_exercise2/ShoesDBController?action=listbrands");
+		response.sendRedirect("/webExercise2/ShoesDBController?action=listbrands");
 
 	}
 
