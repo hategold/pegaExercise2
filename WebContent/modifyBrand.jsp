@@ -8,23 +8,23 @@
 <title>Insert/Edit the shoes brands record</title>
 </head>
 <body>
-	<form action="ControlServlet.do" method="post">
+	<form action="ShoesDBController.do" method="post">
 		<fieldset>
 			<div>
 				<label>BrandID</label><input type="text" name="brandID"
-					value="${BrandID}" readonly="readonly">
+					value="${brand.getBrandID()}" readonly="readonly">
 			</div>
 			<div>
 				<label>BandName</label><input type="text" name="brandName"
-					value="${BrandName}">
+					value="${brand.getBrandName()}">
 			</div>
 			<div>
 				<label>Website</label><input type="text" name="website"
-					value="${Website}">
+					value="${brand.getWebsite()}">
 			</div>
 			<div>
 				<label>Country</label><input type="text" name="country"
-					value="${Country}">
+					value="${brand.getCountry()}">
 			</div>
 			<div>
 				<input type="submit" value="Submit" />

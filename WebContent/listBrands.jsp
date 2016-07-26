@@ -27,19 +27,19 @@
 					<td><c:out value="${brand.getWebsite()}" /></td>
 					<td><c:out value="${brand.getCountry()}" /></td>
 					<td><a
-						href="ControlServlet.do?action=edit&BrandID=<c:out value="${brand.getBrandID() }"/>">Update</a></td>
+						href="ShoesDBController.do?action=edit&BrandID=<c:out value="${brand.getBrandID() }"/>">Update</a></td>
 					<td><a
-						href="ControlServlet.do?action=delete&BrandID=<c:out value="${brand.getBrandID() }"/>">Delete</a></td>
+						href="ShoesDBController.do?action=delete&BrandID=<c:out value="${brand.getBrandID() }"/>">Delete</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
-	
+
 	<p>
-        <a href="ControlServlet.do?action=insert">Add Shoes Brands</a>
-    </p>
+		<a href="ShoesDBController.do?action=insert">Add Shoes Brands</a>
+	</p>
 </body>
-	<%-- 	<table>
+<%-- 	<table>
 		<%
 		%>
 		<tr><td></td></tr>

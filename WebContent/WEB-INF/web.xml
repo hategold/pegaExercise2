@@ -12,13 +12,13 @@
 	</filter-mapping>
 	
 	<servlet>
-		<servlet-name>ControlServlet</servlet-name>
-		<servlet-class>yt.item2.ControlServlet</servlet-class>
+		<servlet-name>ShoesDBController</servlet-name>
+		<servlet-class>yt.item2.ShoesDBController</servlet-class>
 	</servlet>
     
 	<servlet-mapping>
-		<servlet-name>ControlServlet</servlet-name>
-		<url-pattern>/ControlServlet.do</url-pattern>
+		<servlet-name>ShoesDBController</servlet-name>
+		<url-pattern>/ShoesDBController.do</url-pattern>
 	</servlet-mapping>
   
 	<welcome-file-list>

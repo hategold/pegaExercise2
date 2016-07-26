@@ -10,7 +10,7 @@
 </head>
 <body>
 
-    <jsp:forward page="/ControlServlet?action=listBrands"></jsp:forward>
+    <jsp:forward page="/ShoesDBController?action=listBrands"></jsp:forward>
     
 </body>
 </html>
