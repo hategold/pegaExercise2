@@ -54,37 +54,73 @@ public class ShoesDBController extends HttpServlet {
 				forward = LIST_BRANDS;
 				deleteBrand(request.getParameter("BrandID"));
 				request.setAttribute("brandList", readFullBrands());
+				return forward;
 
-			} else if (action.equalsIgnoreCase("edit")) {
+			}
+			if (action.equalsIgnoreCase("edit")) {
 
 				forward = INSERT_OR_EDIT;
 				brand.setBrandID(Integer.parseInt(request.getParameter("BrandID")));
 				selectBrandByID(brand);
 				request.setAttribute("brand", brand);
+				return forward;
 
-			} else if (action.equalsIgnoreCase("insert")) {
+			}
+
+			if (action.equalsIgnoreCase("insert")) {
 
 				forward = INSERT_OR_EDIT;
-
-			} else {
-
-				forward = LIST_BRANDS;
-				request.setAttribute("brandList", readFullBrands());
+				return forward;
 
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e) {
 		}
+
+		forward = LIST_BRANDS;
+		request.setAttribute("brandList", readFullBrands());
 		return forward;
 
 	}
 
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		int brandID;
+
+		try {
+			brandID = Integer.valueOf(request.getParameter("brandID"));
+		} catch (NumberFormatException e) {
+			brandID = -1;
+		}
+
+		Brand brand = new Brand(brandID, request.getParameter("brandName"), request.getParameter("website"), request.getParameter("country"));
+
+		try {
+			if (brand.getBrandID() < 0) {
+				insertBrand(brand);
+				response.sendRedirect("/webExercise2/ShoesDBController?action=listbrands"); //end post
+				return;
+			}
+
+			updateBrand(brand);
+			response.sendRedirect("/webExercise2/ShoesDBController?action=listbrands");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	private void selectBrandByID(Brand brand) throws SQLException {
+
 		String query = "SELECT * FROM brands WHERE BrandID= ?";
 		PreparedStatement preparedStatement;
 		preparedStatement = conn.prepareStatement(query);
 		preparedStatement.setInt(1, brand.getBrandID());
+
 		ResultSet resultSet = preparedStatement.executeQuery();
+
 		while (resultSet.next()) {
 			brand.setBrandName(resultSet.getString("BrandName"));
 			brand.setWebsite(resultSet.getString("Website"));
@@ -110,35 +146,10 @@ public class ShoesDBController extends HttpServlet {
 
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		int brandID = -1;
-
-		try {
-			brandID = Integer.valueOf(request.getParameter("brandID"));
-		} catch (NumberFormatException e) {
-		}
-		Brand brand = new Brand(brandID, request.getParameter("brandName"), request.getParameter("website"), request.getParameter("country"));
-
-		try {
-			if (brand.getBrandID() < 0) {
-				insertBrand(brand);
-
-			} else {
-				updateBrand(brand);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		response.sendRedirect("/webExercise2/ShoesDBController?action=listbrands");
-
-	}
-
 	private void updateBrand(Brand brand) throws SQLException {
 		String query = "UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandID=?";
 		PreparedStatement preparedStatement = conn.prepareStatement(query);
-		
+
 		preparedStatement.setString(1, brand.getBrandName());
 		preparedStatement.setString(2, brand.getWebsite());
 		preparedStatement.setString(3, brand.getCountry());
