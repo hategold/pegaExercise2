@@ -34,6 +34,20 @@ public class ShoesDBController extends HttpServlet {
 
 	public static final String DB_CONFIG = "/shoesDB.properties";
 
+	public static enum ActionEnum {
+		INSERT("insert"), EDIT("edit"), DELETE("delete"), LIST("list");
+
+		private String value;
+
+		private ActionEnum(String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return this.value;
+		}
+	};
+
 	public ShoesDBController() {
 		setConnByProperties(DB_CONFIG);
 	}
@@ -46,31 +60,28 @@ public class ShoesDBController extends HttpServlet {
 	}
 
 	private String excuteAction(String action, HttpServletRequest request) {
-		String forward = "";
-		Brand brand = new Brand();
-		try {
-			if (action.equalsIgnoreCase("delete")) {
 
-				forward = LIST_BRANDS;
+		try {
+			if (ActionEnum.DELETE.getValue().equals(action.toLowerCase())) {
+
 				deleteBrand(request.getParameter("BrandID"));
 				request.setAttribute("brandList", readFullBrands());
-				return forward;
+				return LIST_BRANDS;
 
 			}
-			if (action.equalsIgnoreCase("edit")) {
+			if (ActionEnum.EDIT.getValue().equals(action.toLowerCase())) {
 
-				forward = INSERT_OR_EDIT;
+				Brand brand = new Brand();
 				brand.setBrandID(Integer.parseInt(request.getParameter("BrandID")));
 				selectBrandByID(brand);
 				request.setAttribute("brand", brand);
-				return forward;
+				return INSERT_OR_EDIT;
 
 			}
 
-			if (action.equalsIgnoreCase("insert")) {
+			if (ActionEnum.INSERT.getValue().equals(action.toLowerCase())) {
 
-				forward = INSERT_OR_EDIT;
-				return forward;
+				return INSERT_OR_EDIT;
 
 			}
 		} catch (SQLException e) {
@@ -78,26 +89,30 @@ public class ShoesDBController extends HttpServlet {
 		} catch (NullPointerException e) {
 		}
 
-		forward = LIST_BRANDS;
 		request.setAttribute("brandList", readFullBrands());
-		return forward;
+		return LIST_BRANDS;
 
+	}
+
+	private boolean isCreate(String id) {
+
+		try {
+			Integer.valueOf(id);
+		} catch (NumberFormatException e) {
+			return true;
+		}
+		return false;
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		int brandID;
+		boolean isNewCreate = isCreate(request.getParameter("brandID"));
 
+		Brand brand = new Brand(isNewCreate ? -1 : Integer.valueOf(request.getParameter("brandID")), request.getParameter("brandName"),
+				request.getParameter("website"), request.getParameter("country"));
+		//修改constructor 很多參數 嗽物件封裝起來
 		try {
-			brandID = Integer.valueOf(request.getParameter("brandID"));
-		} catch (NumberFormatException e) {
-			brandID = -1;
-		}
-
-		Brand brand = new Brand(brandID, request.getParameter("brandName"), request.getParameter("website"), request.getParameter("country"));
-
-		try {
-			if (brand.getBrandID() < 0) {
+			if (isNewCreate) {
 				insertBrand(brand);
 				response.sendRedirect("/webExercise2/ShoesDBController?action=listbrands"); //end post
 				return;
@@ -127,7 +142,7 @@ public class ShoesDBController extends HttpServlet {
 			brand.setCountry(resultSet.getString("Country"));
 		}
 		resultSet.close();
-		preparedStatement.close();
+		preparedStatement.close();//id not found 
 
 	}
 
@@ -147,8 +162,8 @@ public class ShoesDBController extends HttpServlet {
 	}
 
 	private void updateBrand(Brand brand) throws SQLException {
-		String query = "UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandID=?";
-		PreparedStatement preparedStatement = conn.prepareStatement(query);
+		String sqlStatement = "UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandID=?";
+		PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
 
 		preparedStatement.setString(1, brand.getBrandName());
 		preparedStatement.setString(2, brand.getWebsite());
@@ -161,9 +176,8 @@ public class ShoesDBController extends HttpServlet {
 
 	private void insertBrand(Brand brand) throws SQLException {
 		String query = "INSERT brands (BrandName, Website, Country) VALUES (?,?,?)";
-		PreparedStatement preparedStatement;
-
-		preparedStatement = conn.prepareStatement(query);
+		
+		PreparedStatement preparedStatement = conn.prepareStatement(query);
 		preparedStatement.setString(1, brand.getBrandName());
 		preparedStatement.setString(2, brand.getWebsite());
 		preparedStatement.setString(3, brand.getCountry());
