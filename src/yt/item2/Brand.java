@@ -2,7 +2,7 @@ package yt.item2;
 
 public class Brand {
 
-	private int brandID;
+	private int brandId;
 
 	private String brandName;
 
@@ -13,19 +13,19 @@ public class Brand {
 	public Brand() {
 	}
 
-	public Brand(int brandID, String brandName, String website, String country) {
-		this.brandID = brandID;
+	public Brand(int brandId, String brandName, String website, String country) {
+		this.brandId = brandId;
 		this.brandName = brandName;
 		this.website = website;
 		this.country = country;
 	}
 
-	public int getBrandID() {
-		return brandID;
+	public int getBrandId() {
+		return brandId;
 	}
 
-	public void setBrandID(int id) {
-		this.brandID = id;
+	public void setBrandId(int id) {
+		this.brandId = id;
 	}
 
 	public String getBrandName() {

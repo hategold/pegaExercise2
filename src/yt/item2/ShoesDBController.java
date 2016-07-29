@@ -26,13 +26,13 @@ public class ShoesDBController extends HttpServlet {
 
 	private Connection conn;
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUId = 1L;
 
 	public static final String LIST_BRANDS = "/listBrands.jsp";
 
 	public static final String INSERT_OR_EDIT = "/modifyBrand.jsp";
 
-	public static final String DB_CONFIG = "/shoesDB.properties";
+	public static final String DB_CONFIG = "/shoesDb.properties";
 
 	public static enum ActionEnum {
 		INSERT("insert"), EDIT("edit"), DELETE("delete"), LIST("list");
@@ -64,7 +64,7 @@ public class ShoesDBController extends HttpServlet {
 		try {
 			if (ActionEnum.DELETE.getValue().equals(action.toLowerCase())) {
 
-				deleteBrand(request.getParameter("BrandID"));
+				deleteBrand(request.getParameter("BrandId"));
 				request.setAttribute("brandList", readFullBrands());
 				return LIST_BRANDS;
 
@@ -72,8 +72,8 @@ public class ShoesDBController extends HttpServlet {
 			if (ActionEnum.EDIT.getValue().equals(action.toLowerCase())) {
 
 				Brand brand = new Brand();
-				brand.setBrandID(Integer.parseInt(request.getParameter("BrandID")));
-				selectBrandByID(brand);
+				brand.setBrandId(Integer.parseInt(request.getParameter("BrandId")));
+				selectBrandById(brand);
 				request.setAttribute("brand", brand);
 				return INSERT_OR_EDIT;
 
@@ -106,9 +106,9 @@ public class ShoesDBController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		boolean isNewCreate = isCreate(request.getParameter("brandID"));
+		boolean isNewCreate = isCreate(request.getParameter("brandId"));
 
-		Brand brand = new Brand(isNewCreate ? -1 : Integer.valueOf(request.getParameter("brandID")), request.getParameter("brandName"),
+		Brand brand = new Brand(isNewCreate ? -1 : Integer.valueOf(request.getParameter("brandId")), request.getParameter("brandName"),
 				request.getParameter("website"), request.getParameter("country"));
 		//修改constructor 很多參數 嗽物件封裝起來
 		try {
@@ -127,12 +127,12 @@ public class ShoesDBController extends HttpServlet {
 
 	}
 
-	private void selectBrandByID(Brand brand) throws SQLException {
+	private void selectBrandById(Brand brand) throws SQLException {
 
-		String query = "SELECT * FROM brands WHERE BrandID= ?";
+		String query = "SELECT * FROM brands WHERE BrandId= ?";
 		PreparedStatement preparedStatement;
 		preparedStatement = conn.prepareStatement(query);
-		preparedStatement.setInt(1, brand.getBrandID());
+		preparedStatement.setInt(1, brand.getBrandId());
 
 		ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -146,12 +146,12 @@ public class ShoesDBController extends HttpServlet {
 
 	}
 
-	private void deleteBrand(String brandID) {
+	private void deleteBrand(String brandId) {
 		try {
 			String query = "DELETE FROM brands WHERE brandId=?";
 
 			PreparedStatement preparedStatement = conn.prepareStatement(query);
-			preparedStatement.setString(1, brandID);
+			preparedStatement.setString(1, brandId);
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
 
@@ -162,13 +162,13 @@ public class ShoesDBController extends HttpServlet {
 	}
 
 	private void updateBrand(Brand brand) throws SQLException {
-		String sqlStatement = "UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandID=?";
+		String sqlStatement = "UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandId=?";
 		PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
 
 		preparedStatement.setString(1, brand.getBrandName());
 		preparedStatement.setString(2, brand.getWebsite());
 		preparedStatement.setString(3, brand.getCountry());
-		preparedStatement.setInt(4, brand.getBrandID());
+		preparedStatement.setInt(4, brand.getBrandId());
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
 
@@ -194,7 +194,7 @@ public class ShoesDBController extends HttpServlet {
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM brands");
 			while (resultSet.next()) {
 				Brand brand = new Brand();
-				brand.setBrandID(Integer.valueOf(resultSet.getString("brandID")));
+				brand.setBrandId(Integer.valueOf(resultSet.getString("brandId")));
 				brand.setBrandName(resultSet.getString("brandName"));
 				brand.setCountry(resultSet.getString("country"));
 				brand.setWebsite(resultSet.getString("website"));
@@ -213,6 +213,7 @@ public class ShoesDBController extends HttpServlet {
 
 		Properties properties = new Properties();
 		try {
+			
 			properties.load(getClass().getClassLoader().getResourceAsStream(filepath));
 
 			String driver = properties.getProperty("driver", "com.mysql.jdbc.Driver");
