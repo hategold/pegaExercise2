@@ -176,7 +176,7 @@ public class ShoesDBController extends HttpServlet {
 
 	private void insertBrand(Brand brand) throws SQLException {
 		String query = "INSERT brands (BrandName, Website, Country) VALUES (?,?,?)";
-		
+
 		PreparedStatement preparedStatement = conn.prepareStatement(query);
 		preparedStatement.setString(1, brand.getBrandName());
 		preparedStatement.setString(2, brand.getWebsite());
@@ -213,7 +213,7 @@ public class ShoesDBController extends HttpServlet {
 
 		Properties properties = new Properties();
 		try {
-			
+
 			properties.load(getClass().getClassLoader().getResourceAsStream(filepath));
 
 			String driver = properties.getProperty("driver", "com.mysql.jdbc.Driver");
