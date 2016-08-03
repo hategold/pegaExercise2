@@ -26,7 +26,7 @@ public class ShoesDBController extends HttpServlet {
 
 	private Connection conn;
 
-	private static final long serialVersionUId = 1L;
+	private static final long serialVersionUID = 1L;
 
 	public static final String LIST_BRANDS = "/listBrands.jsp";
 
